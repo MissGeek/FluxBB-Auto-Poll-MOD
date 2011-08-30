@@ -3,10 +3,10 @@
 
 // Some info about your mod.
 $mod_title      = 'Auto Poll';
-$mod_version    = '1.0';
-$release_date   = '2009-09-07';
-$author         = 'Koos - original version by Mediator';
-$author_email   = 'pampoen10@yahoo.com';
+$mod_version    = '1.1';
+$release_date   = '2011-08-30';
+$author         = 'Ishimaru Chiaki, based on work by Koos and Mediator';
+$author_email   = 'ishimaru.chiaki@gmail.com';
 
 // Set this to false if you haven't implemented the restore function (see below)
 $mod_restore	= true;

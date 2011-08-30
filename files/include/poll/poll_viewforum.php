@@ -1,4 +1,14 @@
 <?php
+/**
+ * Adapted for FluxBB 1.4 by Ishimaru Chiaki (http://ishimaru-design.servhome.org)
+ * Based on work by Caleb Champlin (med_mediator@hotmail.com)
+ *
+ * Copyright (C) 2008-2011 FluxBB
+ * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
+ * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+
+
 // Make sure no one attempts to run this script "directly"
 if (!defined('PUN'))
 	exit;

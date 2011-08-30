@@ -1,1 +1,13 @@
 FluxBB Auto Poll MOD
+Version: 1.1.0
+FluxBB version : 1.4.x
+Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
+GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
+License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+
+Changelog:
+
+2011/08/30 - v1.1.0
+- Update and release for FluxBB 1.4.x.
+- AP_Polls.php file is now localized
+- Added French language
