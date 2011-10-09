@@ -1,7 +1,7 @@
 ##
 ##        Mod title:  Auto Poll
 ##
-##      Mod version:  1.1.0
+##      Mod version:  1.1.1
 ##   Works on PunBB:  1.4.*
 ##     Release date:  2009-09-07
 ##      Review date:  2011-06-14
