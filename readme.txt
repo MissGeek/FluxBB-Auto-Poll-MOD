@@ -1,15 +1,29 @@
 ##
 ##        Mod title:  Auto Poll
 ##
-##      Mod version:  1.1.1
+##      Mod version:  1.2.0rc1
 ##   Works on PunBB:  1.4.*
 ##     Release date:  2009-09-07
-##      Review date:  2011-06-14
+##      Review date:  2012-02-05
 ##           Author:  Koos (pampoen10@yahoo.com)
 ##  Original Author:  Mediator (med_mediator@hotmail.com)
 ##     Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru-design.servhome.org)
 ##
-##      Description:  Adds poll functionality to your forum.
+##      Description:  Adds poll system to your forum. When posting a new topic,
+##                    an extra topic option allows you to add a poll to it.
+##                    Multiple votes can be allowed, and users can send a null vote.
+##                    Ajoute un système de sondage sur votre forum.  Lorsque vous postez un nouveau sujet,
+##                    une option de sujet supplémentaire vous permet d'ajouter un sondage.
+##                    Le vote multiple peut être autorisée, et les utilisateurs peuvent voter blanc.
+##
+##        Languages:  English and French
+##
+##     Repositories:  https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
+##                    http://fluxbb.fr/forums/viewtopic.php?id=12219
+##                    http://fluxbb.org/resources/mods/auto-poll-v110/
+##                    http://fluxbb.org/forums/viewtopic.php?id=5569
+##
+##             Note:  If you are using another language, feel free to provide a translation for this MOD.
 ##
 ##   Affected files:  moderate.php
 ##                    post.php
@@ -50,6 +64,9 @@ files/poll_vote.php to /poll_vote.php
 files/include/poll to /include/poll
 files/plugins/AP_Polls.php to /plugins/AP_Polls.php
 files/lang/English/poll.php to /lang/English/poll.php
+files/lang/English/admin_plugin_polls.php to /lang/English/admin_plugin_polls.php
+files/lang/French/poll.php to /lang/French/poll.php
+files/lang/French/admin_plugin_polls.php to /lang/French/admin_plugin_polls.php
 
 #
 #---------[ 2. RUN ]----------------------------------------------------------
@@ -129,7 +146,7 @@ post.php
 
 
 #
-#---------[ 12. FIND (line: 410) ]---------------------------------------------
+#---------[ 12. FIND (line: 430) ]---------------------------------------------
 #
 
 		redirect('viewtopic.php?pid='.$new_pid.'#p'.$new_pid, $lang_post['Post redirect']);
@@ -143,7 +160,7 @@ post.php
 
 
 #
-#---------[ 14. FIND (line: 633) ]---------------------------------------------
+#---------[ 14. FIND (line: 649) ]---------------------------------------------
 #
 
 if (!$pun_user['is_guest'])
@@ -277,21 +294,21 @@ viewforum.php
 
 
 #
-#---------[ 26. FIND (line: 181) ]---------------------------------------------
+#---------[ 26. FIND (line: 162) ]---------------------------------------------
 #
 
-$result = $db->query($sql) or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
+	$result = $db->query($sql) or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
 
 
 #
 #---------[ 27. BEFORE, ADD ]---------------------------------------------------
 #
 
-require PUN_ROOT.'include/poll/poll_viewforum.php';
+	require PUN_ROOT.'include/poll/poll_viewforum.php';
 
 
 #
-#---------[ 28. FIND (line: 231) ]---------------------------------------------
+#---------[ 28. FIND (line: 212) ]---------------------------------------------
 #
 
 		// Insert the status text before the subject
@@ -312,7 +329,7 @@ viewtopic.php
 
 
 #
-#---------[ 31. FIND (line: 223) ]---------------------------------------------
+#---------[ 31. FIND (line: 212) ]---------------------------------------------
 #
 
 // Retrieve the posts (and their respective poster/online status)

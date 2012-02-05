@@ -20,72 +20,19 @@ function install()
 {
 	global $db, $db_type, $pun_config;
 
-	$schema = array(
-		'FIELDS'	=> array(
-			'id'		=> array(
-				'datatype'		=> 'SERIAL',
-				'allow_null'    => false
-			),
-			'pollid'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'options'	=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> false
-			),
-			'voters'	=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> true
-			),
-			'ptype'		=> array(
-				'datatype'		=> 'TINYINT(4)',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'votes'		=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> true
-			),
-			'created'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'edited'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> true
-			),
-			'edited_by'	=> array(
-				'datatype'		=> 'VARCHAR(200)',
-				'allow_null'	=> true
-			)
-		),
-		'PRIMARY KEY'		=> array('id'),
-		'INDEXES'			=> array(
-			'pollid_idx'	=> array('pollid') //Not sure about this one…
-		)
-	);
-
-	$db->create_table('polls', $schema) or error('Unable to create table "polls"', __FILE__, __LINE__, $db->error());
-	$db->add_field('topics', 'question', 'VARCHAR(255)', false, '', $after_field) or error('Unable to add column "question" to table "topics"', __FILE__, __LINE__, $db->error());
-	$db->add_field('forum_perms', 'post_polls', 'TINYINT(1)', false, '1', $after_field) or error('Unable to add column "post_polls" to table "forum_perms"', __FILE__, __LINE__, $db->error());
-	$db->add_field('groups', 'g_post_polls', 'TINYINT(1)', false, '1', $after_field) or error('Unable to add column "g_post_polls" to table "groups"', __FILE__, __LINE__, $db->error());
-
-	$config = array(
-		'o_poll_enabled'			=> '1',
-		'o_poll_max_fields'			=> '10',
-		'o_poll_mod_delete_polls'	=> '0',
-		'o_poll_mod_edit_polls'		=> '0',
-		'o_poll_mod_reset_polls'	=> '0'
-	);
-
-	while (list($conf_name, $conf_value) = @each($config))
+	//If the board is already usign a MySQL(i) with InnoDB engine
+	if($db_type == 'mysql_innodb' || $db_type == 'mysqli_innodb')
 	{
-    if (!array_key_exists($conf_name, $pun_config))
-			$db->query('INSERT INTO '.$db->prefix."config (conf_name, conf_value) VALUES('$conf_name', $conf_value)")
-				or error('Unable to insert into table '.$db->prefix.'config. Please check your configuration and try again.');
+		$db->query('ALTER TABLE '.$db->prefix.'polls ENGINE = InnoDB') or error('Unable to alter table "polls"', __FILE__, __LINE__, $db->error());
+	}
+	$db->query('ALTER TABLE '.$db->prefix.'polls CHARACTER SET utf8') or error('Unable to change charset of table "polls"', __FILE__, __LINE__, db->error());
+
+	// Change LONGTEXT to TEXT (only for mysql and mysqli, innodb or not ; pgsql and sqlite were already using TEXT)
+	if($db_type == 'mysql' || $db_type == 'mysql_innodb' || $db_type == 'mysqli' || $db_type == 'mysqli_innodb')
+	{
+		$db->alter_field('polls','options','TEXT',false) or error('Unable to alter field "options" in table "polls"', __FILE__, __LINE__, $db->error());
+		$db->alter_field('polls','voters','TEXT',true) or error('Unable to alter field "voters" in table "polls"', __FILE__, __LINE__, $db->error());
+		$db->alter_field('polls','votes','TEXT',true) or error('Unable to alter field "votes" in table "polls"', __FILE__, __LINE__, $db->error());
 	}
 
 	// Delete all .php files in the cache (someone might have visited the forums while we were updating and thus, generated incorrect cache files)
@@ -98,9 +45,13 @@ function restore()
 	global $db, $db_type, $pun_config;
 
 	$db->drop_table('polls') or error('Unable to drop table "polls"', __FILE__, __LINE__, $db->error());
+
 	$db->drop_field('topics', 'question') or error('Unable to drop column "question" from table "topics"', __FILE__, __LINE__, $db->error());
+
 	$db->drop_field('forum_perms', 'post_polls') or error('Unable to drop column "post_polls" from table "forum_perms"', __FILE__, __LINE__, $db->error());
+
 	$db->drop_field('groups', 'g_post_polls') or error('Unable to drop column "g_post_polls" from table "groups"', __FILE__, __LINE__, $db->error());
+
 	$db->query('DELETE FROM '.$db->prefix.'config WHERE conf_name LIKE "o_polls_%"') or error('Unable to remove config entries', __FILE__, __LINE__, $db->error());;
 
 	forum_clear_cache();

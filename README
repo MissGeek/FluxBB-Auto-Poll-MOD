@@ -1,5 +1,6 @@
 FluxBB Auto Poll MOD
-Version: 1.1.1
+Version: 1.2.0rc1
+Last updated: 2012-02-05
 FluxBB version : 1.4.x
 Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
 GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
@@ -7,10 +8,27 @@ License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 Changelog:
 
+2012/02/05 - v2.0rc1
+- Revamped install_mod.php in order to conform it to FluxBB's 1.4 MDK template
+- Updated the lines to search, to make them fit with 1.4.8
+- Fixes wrong character set in polls table for those who installed the 1.1.x version of this MOD
+- Fixes wrong engine usage for polls table in MySQL(i) databases usign InnoDB engine
+- Change column type from LONGTEXT to TEXT for polls table in MySQL(i) databases (pgsql and sqlite were already using this type
+- Added some details in readme.txt
+
 2011/10/09 - v1.1.1
 - Moved 'install_mod.php' to 'files/install_mod.php' for compatibility with daris' Patcher MOD (reported by Daris)
 
 2011/08/30 - v1.1.0
 - Update and release for FluxBB 1.4.x.
 - AP_Polls.php file is now localized
-- Added French language
+- Added French language, for it is my mother tongue
+
+#--- IMPORTANT ! ---
+If you were using this MOD on FluxBB 1.4, the MOD versions prior to 1.2 had a wrong character set (latin1 instead of utf8) in the polls table.  Please use the update_from_1.1.php file to fix it.  For safety reasons, I recommend you to test it on a copy of your database before using it on your live board.  If there's any issue, please leave a report wether on Github, FluxBB.org or FluxBB.fr, and detail your issue as much as possible (server info, browser/OS info, etc.) !
+
+I can give support in English and French.
+
+#--- LOCALIZATION ---
+
+For now, this MOD is available only in English and French.  If you speak another language (Spanish, German, Russian, etc.) as your mother tongue or if you are very fluent in it, feel free to propose a translation so I can add it in the repo with credits.
