@@ -1,18 +1,22 @@
 FluxBB Auto Poll MOD
-Version: 1.2.0rc1
-Last updated: 2012-02-05
-FluxBB version : 1.4.x
+Version: 1.2.0
+Last updated: 2012-06-19
+FluxBB version : 1.4.x/1.5.x
 Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
 GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
 License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 Changelog:
 
-2012/02/05 - v2.0rc1
+2012/06/19 - v1.2.0
+- Updated for compatibility with 1.5.x
+- Changed an instruction regarding moderate.php in readme.txt because the code to find has changed in 1.5.  User now has to find a new code block that doesn't change between both FluxBB branches.
+
+2012/02/05 - v1.2.0rc1
 - Revamped install_mod.php in order to conform it to FluxBB's 1.4 MDK template
 - Updated the lines to search, to make them fit with 1.4.8
 - Fixes wrong character set in polls table for those who installed the 1.1.x version of this MOD
-- Fixes wrong engine usage for polls table in MySQL(i) databases usign InnoDB engine
+- Fixes wrong engine usage for polls table in MySQL(i) databases using InnoDB engine
 - Change column type from LONGTEXT to TEXT for polls table in MySQL(i) databases (pgsql and sqlite were already using this type
 - Added some details in readme.txt
 

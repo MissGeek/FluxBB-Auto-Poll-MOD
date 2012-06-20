@@ -1,55 +1,55 @@
 ##
 ##        Mod title:  Auto Poll
 ##
-##      Mod version:  1.2.0rc1
-##   Works on PunBB:  1.4.*
-##     Release date:  2009-09-07
-##      Review date:  2012-02-05
-##           Author:  Koos (pampoen10@yahoo.com)
-##  Original Author:  Mediator (med_mediator@hotmail.com)
-##     Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru-design.servhome.org)
+##       Mod version:  1.2.0
+##   Works on FluxBB:  1.4.*, 1.5.*
+##      Release date:  2009-09-07
+##       Review date:  2012-06-19
+##            Author:  Koos (pampoen10@yahoo.com)
+##   Original Author:  Mediator (med_mediator@hotmail.com)
+##      Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru-design.servhome.org)
 ##
-##      Description:  Adds poll system to your forum. When posting a new topic,
+##       Description:  Adds poll system to your forum. When posting a new topic,
 ##                    an extra topic option allows you to add a poll to it.
 ##                    Multiple votes can be allowed, and users can send a null vote.
 ##                    Ajoute un système de sondage sur votre forum.  Lorsque vous postez un nouveau sujet,
 ##                    une option de sujet supplémentaire vous permet d'ajouter un sondage.
 ##                    Le vote multiple peut être autorisée, et les utilisateurs peuvent voter blanc.
 ##
-##        Languages:  English and French
+##         Languages:  English and French
 ##
-##     Repositories:  https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
-##                    http://fluxbb.fr/forums/viewtopic.php?id=12219
-##                    http://fluxbb.org/resources/mods/auto-poll-v110/
-##                    http://fluxbb.org/forums/viewtopic.php?id=5569
+##      Repositories:  https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
+##                     http://fluxbb.fr/forums/viewtopic.php?id=12219
+##                     http://fluxbb.org/resources/mods/auto-poll-v110/
+##                     http://fluxbb.org/forums/viewtopic.php?id=5569
 ##
-##             Note:  If you are using another language, feel free to provide a translation for this MOD.
+##               Note:  If you are using another language, feel free to provide a translation for this MOD.
 ##
-##   Affected files:  moderate.php
-##                    post.php
-##                    edit.php
-##                    search.php
-##                    viewforum.php
-##                    viewtopic.php
-##                    include/functions.php
+##    Affected files:  moderate.php
+##                     post.php
+##                     edit.php
+##                     search.php
+##                     viewforum.php
+##                     viewtopic.php
+##                     include/functions.php
 ##
-##       Affects DB:  New tables:
-##                       'polls'
-##                    New column in 'topics' table:
-##                       'question'
-##                    New column in 'forum_perms' table:
-##                       'post_polls'
-##                    New options in 'config' table:
-##                       'o_poll_enabled'
-##                       'o_poll_max_fields'
-##                       'o_poll_mod_delete_polls'
-##                       'o_poll_mod_edit_polls'
-##                       'o_poll_mod_reset_polls'
+##        Affects DB:  New tables:
+##                        'polls'
+##                     New column in 'topics' table:
+##                        'question'
+##                     New column in 'forum_perms' table:
+##                        'post_polls'
+##                     New options in 'config' table:
+##                        'o_poll_enabled'
+##                        'o_poll_max_fields'
+##                        'o_poll_mod_delete_polls'
+##                        'o_poll_mod_edit_polls'
+##                        'o_poll_mod_reset_polls'
 ##
-##       DISCLAIMER:  Please note that "mods" are not officially supported by
-##                    PunBB. Installation of this modification is done at your
-##                    own risk. Backup your forum database and any and all
-##                    applicable files before proceeding.
+##        DISCLAIMER:  Please note that "mods" are not officially supported by
+##                     PunBB. Installation of this modification is done at your
+##                     own risk. Backup your forum database and any and all
+##                     applicable files before proceeding.
 ##
 
 
@@ -93,11 +93,15 @@ moderate.php
 #---------[ 5. FIND (line: 580) ]---------------------------------------------
 #
 
-		// Delete any subscriptions
-		$db->query('DELETE FROM '.$db->prefix.'topic_subscriptions WHERE topic_id IN('.implode(',', $topics).') AND topic_id != '.$merge_to_tid) or error('Unable to delete subscriptions', __FILE__, __LINE__, $db->error());
+		// Get last_post, last_post_id, and last_poster from the topic and update it	
+		// Get last_post, last_post_id, and last_poster from the topic and update it
+		$result = $db->query('SELECT id, poster, posted FROM '.$db->prefix.'posts WHERE topic_id='.$tid.' ORDER BY id DESC LIMIT 1') or error('Unable to fetch post info', __FILE__, __LINE__, $db->error());	202:             $result = $db->query('SELECT id, poster, posted FROM '.$db->prefix.'posts WHERE topic_id='.$tid.' ORDER BY id DESC LIMIT 1') or error('Unable to fetch post info', __FILE__, __LINE__, $db->error());
+		$last_post_data = $db->fetch_assoc($result);	203:             $last_post_data = $db->fetch_assoc($result);
+		// Merge the posts into the topic	578:         // Merge the posts into the topic
+		$db->query('UPDATE '.$db->prefix.'posts SET topic_id='.$merge_to_tid.' WHERE topic_id IN('.implode(',', $topics).')') or error('Unable to merge the posts into the topic', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 6. BEFORE, ADD ]---------------------------------------------------
+#---------[ 6. AFTER, ADD ]---------------------------------------------------
 #
 
 		// POLL MOD: Delete polls
