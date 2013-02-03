@@ -1,14 +1,4 @@
 <?php
-/**
- * Adapted for FluxBB 1.4 by Ishimaru Chiaki (http://ishimaru-design.servhome.org)
- * Based on work by Caleb Champlin (med_mediator@hotmail.com)
- *
- * Copyright (C) 2008-2011 FluxBB
- * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
- * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
- */
-
-
 // Make sure no one attempts to run this script "directly"
 if (!defined('PUN'))
 	exit;
@@ -28,21 +18,21 @@ if ($poll_question)
 	// get the poll data, query modified by 2.1
 	$result = $db->query('SELECT ptype, options, voters, votes, created, edited, edited_by  FROM '.$db->prefix.'polls WHERE pollid='.$id) or error('Unable to fetch poll info', __FILE__, __LINE__, $db->error());
 
-    if (!$db->num_rows($result))
-        message($lang_common['Bad request']);
+	if (!$db->num_rows($result))
+		message($lang_common['Bad request'], false, '404 Not found');
 
-    $cur_poll = $db->fetch_assoc($result);
+	$cur_poll = $db->fetch_assoc($result);
 
-    $options = unserialize($cur_poll['options']);
-    if (!empty($cur_poll['voters']))
-        $voters = unserialize($cur_poll['voters']);
-    else
-        $voters = array();
+	$options = unserialize($cur_poll['options']);
+	if (!empty($cur_poll['voters']))
+		$voters = unserialize($cur_poll['voters']);
+	else
+		$voters = array();
 
-    $ptype = $cur_poll['ptype']; 
-    // yay memory!
-    // $cur_poll = null;
-    $firstcheck = false;
+	$ptype = $cur_poll['ptype']; 
+	// yay memory!
+	// $cur_poll = null;
+	$firstcheck = false;
 	
 	// Start 2.1
 	$edited = '';
@@ -95,7 +85,7 @@ if ($poll_question)
 								<input name="vote" <?php if (!$firstcheck) { echo 'checked="checked"'; $firstcheck = true; }; ?> type="radio" value="<?php echo $key ?>" />
 <?php 		} else if ($ptype == 2) { ?>
 								<input name="options[<?php echo $key ?>]" type="checkbox" value="1" />
-<?php 		} else message($lang_common['Bad request']) ?>
+<?php 		} else message($lang_common['Bad request'], false, '404 Not found') ?>
 								<?php echo pun_htmlspecialchars($value); ?>
 							</label>
 						</div>
@@ -110,7 +100,7 @@ if ($poll_question)
 		</form>
 <?php
 
-    } 
+	} 
 	else 
 	{
 ?>
@@ -122,7 +112,7 @@ if ($poll_question)
 						<table>
 <?php
 		if (!empty($cur_poll['votes']))
-				$votes = unserialize($cur_poll['votes']);
+			$votes = unserialize($cur_poll['votes']);
 		else
 			$votes = array();
 
@@ -160,7 +150,7 @@ if ($poll_question)
 <?php
 			}
 			else
-				message($lang_common['Bad request']);
+				message($lang_common['Bad request'], false, '404 Not found');
 		}
 ?>
 							<tr>

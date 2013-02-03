@@ -1,12 +1,18 @@
 FluxBB Auto Poll MOD
-Version: 1.2.0
-Last updated: 2012-06-19
-FluxBB version : 1.4.x/1.5.x
+Version: 1.2.1
+Last updated: 2013-02-03
+FluxBB version : 1.5.x (not compatible with 1.4.x anymore)
 Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
 GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
 License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 Changelog:
+
+2013/02/03 - v1.2.1
+- Fixed newline format for all files. Now all files use UNIX newline format (LF)
+- Added HTTP errors arguments for message() where 'No View', 'No permission' and 'Bad request' language keys are used. This change makes the mod being not compatible anymore with FluxBB 1.4.x.
+- replaced 'four-space indentation' by tabulation, for a proper display according to user preferences when viewed with a text editor.
+- Replaced old PunBB copyright notices with FluxBB's new one.
 
 2012/06/19 - v1.2.0
 - Updated for compatibility with 1.5.x

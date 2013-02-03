@@ -1,9 +1,26 @@
 <?php
-/**
- * Copyright (C) 2008-2012 FluxBB
- * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
- * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
- */
+/***********************************************************************
+
+  Copyright (C) 2002-2005  Rickard Andersson (rickard@punbb.org)
+
+  This file is part of PunBB.
+
+  PunBB is free software; you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published
+  by the Free Software Foundation; either version 2 of the License,
+  or (at your option) any later version.
+
+  PunBB is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+  MA  02111-1307  USA
+
+************************************************************************/
 
 
 define('PUN_ROOT', './');
@@ -33,17 +50,17 @@ else
 	$id = 0;
 
 if ($id < 1)
-	message($lang_common['Bad request'], false, '404 Not found');
+	message($lang_common['Bad request']);
 
 
 if ($pun_user['g_read_board'] == '0')
-	message($lang_common['No view'], false, '403 Forbidden');
+	message($lang_common['No view']);
 
 
 // Fetch some info about the topic and the forum
 $result = $db->query('SELECT f.moderators FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.question!=\'\' AND t.id='.$id) or error('Unable to fetch topic info', __FILE__, __LINE__, $db->error());
 if (!$db->num_rows($result))
-	message($lang_common['Bad request'], false, '404 Not found');
+	message($lang_common['Bad request']);
 
 $cur_topic = $db->fetch_assoc($result);
 
@@ -54,11 +71,12 @@ $is_admmod = ($pun_user['g_id'] == PUN_ADMIN || ($pun_user['g_id'] == PUN_MOD &&
 unset($cur_topic);
 
 
+
 if (isset($_GET['edit']))
 {
 	// Do we have permission to edit this poll?
 	if (!(($is_admmod && $pun_config['o_poll_mod_edit_polls'] == '1') || $pun_user['g_id'] == PUN_ADMIN))
-		message($lang_common['No permission'], false, '403 Forbidden');
+		message($lang_common['No permission']);
 
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_poll['Edit poll']);
 	define('PUN_ACTIVE_PAGE', 'index');
@@ -79,34 +97,34 @@ if (isset($_GET['edit']))
 			message($lang_poll['Poll type unknown']);
 
 		$question = pun_trim($_POST['req_question']);
-		if ($question == '')
-			$errors[] = $lang_poll['No question'];
-		else if (pun_strlen($question) > 70)
-			$errors[] = $lang_poll['Too long question'];
-		else if ($pun_config['p_subject_all_caps'] == '0' && strtoupper($question) == $question && ($pun_user['g_id'] > PUN_MOD && !$pun_user['g_global_moderation']))
-			$question = ucwords(strtolower($question)); 
+        if ($question == '')
+            $errors[] = $lang_poll['No question'];
+        else if (pun_strlen($question) > 70)
+            $errors[] = $lang_poll['Too long question'];
+        else if ($pun_config['p_subject_all_caps'] == '0' && strtoupper($question) == $question && ($pun_user['g_id'] > PUN_MOD && !$pun_user['g_global_moderation']))
+            $question = ucwords(strtolower($question)); 
 
-		// This isn't exactly a good way to do it, but it works. I may rethink this code later
-		$option = array();
-		$lastoption = "null";
-		while (list($key, $value) = each($_POST['poll_option'])) 
+        // This isn't exactly a good way to do it, but it works. I may rethink this code later
+        $option = array();
+        $lastoption = "null";
+        while (list($key, $value) = each($_POST['poll_option'])) 
 		{
 			$value = pun_trim($value);
-			if ($value != "") 
+            if ($value != "") 
 			{
-				if ($lastoption == '')
-					$errors[] = $lang_poll['Empty option'];
+                if ($lastoption == '')
+                    $errors[] = $lang_poll['Empty option'];
 
-				$option[$key] = pun_trim($value);
-				if (pun_strlen($option[$key]) > 55)
-					$errors[] = $lang_poll['Too long option'];
+                $option[$key] = pun_trim($value);
+                if (pun_strlen($option[$key]) > 55)
+                    $errors[] = $lang_poll['Too long option'];
 				else if ($key > $pun_config['o_poll_max_fields'])
-					message($lang_common['Bad request'], false, '404 Not found');
-				else if ($pun_config['p_subject_all_caps'] == '0' && strtoupper($option[$key]) == $option[$key] && ($pun_user['g_id'] > PUN_MOD && !$pun_user['g_global_moderation']))
-					$option[$key] = ucwords(strtolower($option[$key]));
-			} 
-			$lastoption = pun_trim($value);
-		}
+					message($lang_common['Bad request']);
+                else if ($pun_config['p_subject_all_caps'] == '0' && strtoupper($option[$key]) == $option[$key] && ($pun_user['g_id'] > PUN_MOD && !$pun_user['g_global_moderation']))
+                    $option[$key] = ucwords(strtolower($option[$key]));
+            } 
+            $lastoption = pun_trim($value);
+        }
 
 		// People are naughty
 		if (empty($option))
@@ -117,7 +135,7 @@ if (isset($_GET['edit']))
 
 		
 		// If there are errors, we display them
-		if (!empty($errors)) 
+	    if (!empty($errors)) 
 		{
 			$found_error = true;
 			$cur_index = 1;
@@ -129,8 +147,8 @@ if (isset($_GET['edit']))
 						<p><?php echo $lang_post['Post errors info'] ?></p>
 						<ul>
 						<?php
-						while (list(, $cur_error) = each($errors))
-						echo "\t\t\t\t" . '<li><strong>' . $cur_error . '</strong></li>' . "\n";
+				        while (list(, $cur_error) = each($errors))
+				        echo "\t\t\t\t" . '<li><strong>' . $cur_error . '</strong></li>' . "\n";
 						?>
 						</ul>
 					</div>
@@ -156,7 +174,7 @@ if (isset($_GET['edit']))
 		// Request SELECT
 		$result = $db->query('SELECT t.question, p.options, p.ptype, f.moderators FROM '.$db->prefix.'polls AS p INNER JOIN '.$db->prefix.'topics AS t ON p.pollid=t.id INNER JOIN '.$db->prefix.'forums AS f ON t.forum_id=f.id WHERE p.pollid='.$id.' LIMIT 1') or error('Unable to find poll', __FILE__, __LINE__, $db->error());
 		if (!$db->num_rows($result))
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		$cur_poll = $db->fetch_assoc($result);
 
@@ -314,7 +332,7 @@ else if (isset($_GET['delete']))
 {
 	// Do we have permission to delete this poll?
 	if (!(($is_admmod && $pun_config['o_poll_mod_delete_polls'] == '1') || $pun_user['g_id'] == PUN_ADMIN))
-		message($lang_common['No permission'], false, '403 Forbidden');
+		message($lang_common['No permission']);
 
 
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_poll['Delete poll']);
@@ -338,7 +356,7 @@ else if (isset($_GET['delete']))
 		// Fetch some info about the post, the topic and the forum
 		$result = $db->query('SELECT f.id AS fid, f.forum_name, f.moderators, f.redirect_url, fp.post_replies, fp.post_topics, t.id AS tid, t.subject, t.posted, t.closed FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.id='.$id) or error('Unable to fetch topic info', __FILE__, __LINE__, $db->error());
 		if (!$db->num_rows($result))
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		$cur_topic = $db->fetch_assoc($result);
 
@@ -346,13 +364,13 @@ else if (isset($_GET['delete']))
 		$poll_question = $db->result($result);
 
 		if (!$poll_question)
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		// get the poll data, query modified by 2.1
 		$result = $db->query('SELECT ptype, options, voters, votes, created, edited, edited_by  FROM '.$db->prefix.'polls WHERE pollid='.$id) or error('Unable to fetch poll info', __FILE__, __LINE__, $db->error());
 
 		if (!$db->num_rows($result))
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		$cur_poll = $db->fetch_assoc($result);
 
@@ -403,7 +421,7 @@ else if (isset($_GET['delete']))
 						<table>
 <?php
 		if (!empty($cur_poll['votes']))
-			$votes = unserialize($cur_poll['votes']);
+				$votes = unserialize($cur_poll['votes']);
 		else
 			$votes = array();
 
@@ -485,7 +503,7 @@ else if (isset($_GET['reset']))
 		// Fetch some info about the post, the topic and the forum
 		$result = $db->query('SELECT f.id AS fid, f.forum_name, f.moderators, f.redirect_url, fp.post_replies, fp.post_topics, t.id AS tid, t.subject, t.posted, t.closed FROM '.$db->prefix.'topics AS t INNER JOIN '.$db->prefix.'forums AS f ON f.id=t.forum_id LEFT JOIN '.$db->prefix.'forum_perms AS fp ON (fp.forum_id=f.id AND fp.group_id='.$pun_user['g_id'].') WHERE (fp.read_forum IS NULL OR fp.read_forum=1) AND t.id='.$id) or error('Unable to fetch topic info', __FILE__, __LINE__, $db->error());
 		if (!$db->num_rows($result))
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		$cur_topic = $db->fetch_assoc($result);
 
@@ -493,13 +511,13 @@ else if (isset($_GET['reset']))
 		$poll_question = $db->result($result);
 
 		if (!$poll_question)
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		// get the poll data, query modified by 2.1
 		$result = $db->query('SELECT ptype, options, voters, votes, created, edited, edited_by  FROM '.$db->prefix.'polls WHERE pollid='.$id) or error('Unable to fetch poll info', __FILE__, __LINE__, $db->error());
 
 		if (!$db->num_rows($result))
-			message($lang_common['Bad request'], false, '404 Not found');
+			message($lang_common['Bad request']);
 
 		$cur_poll = $db->fetch_assoc($result);
 
@@ -549,7 +567,7 @@ else if (isset($_GET['reset']))
 						<table>
 <?php
 		if (!empty($cur_poll['votes']))
-			$votes = unserialize($cur_poll['votes']);
+				$votes = unserialize($cur_poll['votes']);
 		else
 			$votes = array();
 
@@ -634,7 +652,7 @@ if (!empty($checkboxes))
 	}
 }
 else
-	message($lang_common['Bad request'], false, '404 Not found');
+	message($lang_common['Bad request']);
 
 
 require PUN_ROOT.'footer.php';

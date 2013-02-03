@@ -3,75 +3,105 @@
 
 // Some info about your mod.
 $mod_title      = 'Auto Poll';
-$mod_version    = '1.2.0rc1';
-$release_date   = '2012-02-05';
-$author         = 'Ishimaru Chiaki, based on work by Koos and Mediator';
+$mod_version    = '1.2.1';
+$release_date   = '2013-09-07';
+$author         = 'Ishimaru Chiaki - previously maintained by Koos and Mediator';
 $author_email   = 'ishimaru.chiaki@gmail.com';
-
-// Versions of FluxBB this mod was created for. A warning will be displayed, if versions do not match
-$fluxbb_versions= array('1.4.5','1.4.6','1.4.7','1.4.8');
 
 // Set this to false if you haven't implemented the restore function (see below)
 $mod_restore	= true;
 
 
-// This following function will be called when the user presses the "Install" button
+// This following function will be called when the user presses the "Install" button.
 function install()
 {
 	global $db, $db_type, $pun_config;
 
-	$schema = array(
-		'FIELDS'	=> array(
-			'id'		=> array(
-				'datatype'		=> 'SERIAL',
-				'allow_null'    => false
-			),
-			'pollid'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'options'	=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> false
-			),
-			'voters'	=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> true
-			),
-			'ptype'		=> array(
-				'datatype'		=> 'TINYINT(4)',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'votes'		=> array(
-				'datatype'		=> 'TEXT',
-				'allow_null'	=> true
-			),
-			'created'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> false,
-				'default'		=> '0'
-			),
-			'edited'	=> array(
-				'datatype'		=> 'INT(10) UNSIGNED',
-				'allow_null'	=> true
-			),
-			'edited_by'	=> array(
-				'datatype'		=> 'VARCHAR(200)',
-				'allow_null'	=> true
-			)
-		),
-		'PRIMARY KEY'		=> array('id'),
-		'INDEXES'			=> array(
-			'pollid_idx'	=> array('pollid') //Not sure about this one…
-		)
-	);
+	switch ($db_type)
+	{
+		case 'mysql':
+		case 'mysqli':
+			$sql = 'CREATE TABLE '.$db->prefix."polls (
+					id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+					pollid INT(10) UNSIGNED NOT NULL DEFAULT 0,
+					options LONGTEXT NOT NULL,
+					voters LONGTEXT,
+					ptype tinyint(4) NOT NULL default '0',
+					votes LONGTEXT,
+					created INT(10) UNSIGNED NOT NULL DEFAULT 0,
+					edited INT(10) UNSIGNED,
+					edited_by VARCHAR(200),
+					PRIMARY KEY (id)
+					) TYPE=MyISAM;";
+			break;
 
-	$db->create_table('polls', $schema) or error('Unable to create table "polls"', __FILE__, __LINE__, $db->error());
-	$db->add_field('topics', 'question', 'VARCHAR(255)', false, '', $after_field) or error('Unable to add column "question" to table "topics"', __FILE__, __LINE__, $db->error());
-	$db->add_field('forum_perms', 'post_polls', 'TINYINT(1)', false, '1', $after_field) or error('Unable to add column "post_polls" to table "forum_perms"', __FILE__, __LINE__, $db->error());
-	$db->add_field('groups', 'g_post_polls', 'TINYINT(1)', false, '1', $after_field) or error('Unable to add column "g_post_polls" to table "groups"', __FILE__, __LINE__, $db->error());
+		case 'pgsql':
+			$db->start_transaction();
+
+			$sql = 'CREATE TABLE '.$db->prefix."polls (
+					id SERIAL,
+					pollid INT NOT NULL DEFAULT 0,
+					options TEXT NOT NULL,
+					voters TEXT,
+					ptype SMALLINT NOT NULL default 0,
+					votes TEXT,
+					created INT NOT NULL DEFAULT 0,
+					edited INT,
+					edited_by VARCHAR(200),
+					PRIMARY KEY (id)
+					)";
+			break;
+
+		case 'sqlite':
+			$db->start_transaction();
+
+			$sql = 'CREATE TABLE '.$db->prefix."polls (
+					id INTEGER NOT NULL,
+					pollid INTEGER NOT NULL DEFAULT 0,
+					options TEXT NOT NULL,
+					voters TEXT,
+					ptype INTEGER NOT NULL default 0,
+					votes TEXT,
+					created INTEGER NOT NULL DEFAULT 0,
+					edited INTEGER,
+					edited_by VARCHAR(200),
+					PRIMARY KEY (id)
+					)";
+			break;
+	}
+	$db->query($sql) or error('Unable to create table '.$db->prefix.'polls.',  __FILE__, __LINE__, $db->error());
+
+
+	switch ($db_type)
+	{
+		case 'mysql':
+		case 'mysqli':
+			$db->query("ALTER TABLE ".$db->prefix."topics ADD question VARCHAR(255) NOT NULL DEFAULT ''") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			$db->query("ALTER TABLE ".$db->prefix."forum_perms ADD post_polls TINYINT(1) NOT NULL DEFAULT 1") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			
+			$db->query("ALTER TABLE ".$db->prefix."groups ADD g_post_polls SMALLINT  NOT NULL DEFAULT 1") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			
+			break;
+
+		case 'pgsql':
+			$db->query("ALTER TABLE ".$db->prefix."topics ADD question VARCHAR(255)") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			$db->query('ALTER TABLE '.$db->prefix.'topics ALTER question SET DEFAULT \'\'') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+
+			$db->query('UPDATE '.$db->prefix.'topics SET question=\'\'') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+			$db->query('ALTER TABLE '.$db->prefix.'topics ALTER question SET NOT NULL') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+
+			$db->query("ALTER TABLE ".$db->prefix."forum_perms ADD post_polls SMALLINT") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			$db->query('ALTER TABLE '.$db->prefix.'forum_perms ALTER post_polls SET DEFAULT 1') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+			$db->query('UPDATE '.$db->prefix.'forum_perms SET post_polls=1') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+			$db->query('ALTER TABLE '.$db->prefix.'forum_perms ALTER post_polls SET NOT NULL') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+			break;
+
+		case 'sqlite':
+			$db->query("ALTER TABLE ".$db->prefix."topics ADD question VARCHAR(255) NOT NULL DEFAULT ''") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			$db->query("ALTER TABLE ".$db->prefix."forum_perms ADD post_polls INTEGER NOT NULL DEFAULT 1") or error('Unable to add columns to table', __FILE__, __LINE__, $db->error());
+			break;
+	}
+
 
 	$config = array(
 		'o_poll_enabled'			=> '1',
@@ -83,27 +113,55 @@ function install()
 
 	while (list($conf_name, $conf_value) = @each($config))
 	{
-    if (!array_key_exists($conf_name, $pun_config))
-			$db->query('INSERT INTO '.$db->prefix."config (conf_name, conf_value) VALUES('$conf_name', $conf_value)")
-				or error('Unable to insert into table '.$db->prefix.'config. Please check your configuration and try again.');
+		$db->query('INSERT INTO '.$db->prefix."config (conf_name, conf_value) VALUES('$conf_name', $conf_value)")
+			or exit('Unable to insert into table '.$db->prefix.'config. Please check your configuration and try again. <a href="JavaScript: history.go(-1)">Go back</a>.');
 	}
 
-	// Delete all .php files in the cache (someone might have visited the forums while we were updating and thus, generated incorrect cache files)
-	forum_clear_cache();
+	if ($db_type == 'pgsql' || $db_type == 'sqlite')
+		$db->end_transaction();
+
+	// Delete everything in the cache since we messed with some stuff
+	$d = dir(PUN_ROOT.'cache');
+	while (($entry = $d->read()) !== false)
+	{
+		if (substr($entry, strlen($entry)-4) == '.php')
+			@unlink(PUN_ROOT.'cache/'.$entry);
+	}
+	$d->close();
 }
 
-// This following function will be called when the user presses the "Restore" button (only if $mod_restore is true (see above))
+// This following function will be called when the user presses the "Restore" button (only if $mod_uninstall is true (see above))
 function restore()
 {
 	global $db, $db_type, $pun_config;
 
-	$db->drop_table('polls') or error('Unable to drop table "polls"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('topics', 'question') or error('Unable to drop column "question" from table "topics"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('forum_perms', 'post_polls') or error('Unable to drop column "post_polls" from table "forum_perms"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('groups', 'g_post_polls') or error('Unable to drop column "g_post_polls" from table "groups"', __FILE__, __LINE__, $db->error());
-	$db->query('DELETE FROM '.$db->prefix.'config WHERE conf_name LIKE "o_polls_%"') or error('Unable to remove config entries', __FILE__, __LINE__, $db->error());;
+	if ($db_type == 'pgsql' || $db_type == 'sqlite')
+		$db->start_transaction();
 
-	forum_clear_cache();
+	$db->query('DROP TABLE '.$db->prefix.'polls') or error('Unable to remove table', __FILE__, __LINE__, $db->error());
+
+	if ($db_type != 'sqlite')	// No DROP column in SQLite
+	{
+		$db->query('ALTER TABLE '.$db->prefix.'topics DROP question') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+		$db->query('ALTER TABLE '.$db->prefix.'forum_perms DROP post_polls') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+		$db->query('ALTER TABLE '.$db->prefix.'groups DROP g_post_polls') or error('Unable to alter DB structure.', __FILE__, __LINE__, $db->error());
+	}
+
+
+	$like_command = ($db_type == 'pgsql') ? 'ILIKE' : 'LIKE';
+	$db->query('DELETE FROM '.$db->prefix.'config WHERE conf_name '.$like_command.' \'o_poll%\'') or error('Unable to remove config entries', __FILE__, __LINE__, $db->error());
+
+	if ($db_type == 'pgsql' || $db_type == 'sqlite')
+		$db->end_transaction();
+
+	// Delete everything in the cache since we messed with some stuff
+	$d = dir(PUN_ROOT.'cache');
+	while (($entry = $d->read()) !== false)
+	{
+		if (substr($entry, strlen($entry)-4) == '.php')
+			@unlink(PUN_ROOT.'cache/'.$entry);
+	}
+	$d->close();
 }
 
 /***********************************************************************/
@@ -120,18 +178,21 @@ require PUN_ROOT.'include/common.php';
 if (!defined('PUN_DEBUG'))
 	define('PUN_DEBUG', 1);
 
-// Make sure we are running a FluxBB version that this mod works with
-$version_warning = !in_array($pun_config['o_cur_version'], $fluxbb_versions);
+$version = explode(".", $pun_config['o_cur_version']);
+// Make sure we are running a PunBB version that this mod works with
+if ($version[0] != 1 || $version[1] != 4)
+	exit('You are running a version of PunBB ('.$pun_config['o_cur_version'].') that this mod does not support. This mod supports PunBB versions: 1.2.x');
 
-$style = (isset($pun_user)) ? $pun_user['style'] : $pun_config['o_default_style'];
+$style = (isset($cur_user)) ? $cur_user['style'] : $pun_config['o_default_style'];
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+
+<html dir="ltr">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?php echo pun_htmlspecialchars($mod_title) ?> installation</title>
-<link rel="stylesheet" type="text/css" href="style/<?php echo $style.'.css' ?>" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title><?php echo $mod_title ?> installation</title>
+<link rel="stylesheet" type="text/css" href="style/<?php echo $pun_config['o_default_style'].'.css' ?>" />
 </head>
 <body>
 
@@ -188,16 +249,11 @@ else
 			<div><input type="hidden" name="form_sent" value="1" /></div>
 			<div class="inform">
 				<p>This script will update your database to work with the following modification:</p>
-				<p><strong>Mod title:</strong> <?php echo pun_htmlspecialchars($mod_title.' '.$mod_version) ?></p>
+				<p><strong>Mod title:</strong> <?php echo pun_htmlspecialchars($mod_title).' '.$mod_version ?></p>
 				<p><strong>Author:</strong> <?php echo pun_htmlspecialchars($author) ?> (<a href="mailto:<?php echo pun_htmlspecialchars($author_email) ?>"><?php echo pun_htmlspecialchars($author_email) ?></a>)</p>
-				<p><strong>Disclaimer:</strong> Mods are not officially supported by FluxBB. Mods generally can't be uninstalled without running SQL queries manually against the database. Make backups of all data you deem necessary before installing.</p>
-<?php if ($mod_restore): ?>
-				<p>If you've previously installed this mod and would like to uninstall it, you can click the Restore button below to restore the database.</p>
-<?php endif; ?>
-<?php if ($version_warning): ?>
-				<p style="color: #a00"><strong>Warning:</strong> The mod you are about to install was not made specifically to support your current version of FluxBB (<?php echo $pun_config['o_cur_version']; ?>). This mod supports FluxBB versions: <?php echo pun_htmlspecialchars(implode(', ', $fluxbb_versions)); ?>. If you are uncertain about installing the mod due to this potential version conflict, contact the mod author.</p>
-<?php endif; ?>
-			</div>
+				<p><strong>Disclaimer:</strong> Mods are not officially supported by PunBB. Mods generally can't be uninstalled without running SQL queries manually against the database. Make backups of all data you deem necessary before installing.</p>
+<?php if ($mod_restore): ?>				<p>If you've previously installed this mod and would like to uninstall it, you can click the restore button below to restore the database.</p>
+<?php endif; ?>			</div>
 			<p class="buttons"><input type="submit" name="install" value="Install" /><?php if ($mod_restore): ?><input type="submit" name="restore" value="Restore" /><?php endif; ?></p>
 		</form>
 	</div>
@@ -213,10 +269,3 @@ else
 
 </body>
 </html>
-<?php
-
-// End the transaction
-$db->end_transaction();
-
-// Close the db connection (and free up any result data)
-$db->close();
