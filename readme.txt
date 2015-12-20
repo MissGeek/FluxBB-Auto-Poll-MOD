@@ -1,13 +1,13 @@
 ##
 ##        Mod title:  Auto Poll
 ##
-##       Mod version:  1.2.0
+##       Mod version:  1.2.2rc1
 ##   Works on FluxBB:  1.5.*
 ##      Release date:  2009-09-07
-##       Review date:  2013-02-03
+##       Review date:  2015-12-20
 ##            Author:  Koos (pampoen10@yahoo.com)
 ##   Original Author:  Mediator (med_mediator@hotmail.com)
-##      Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru-design.servhome.org)
+##      Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru.pingveno.net)
 ##
 ##       Description:  Adds poll system to your forum. When posting a new topic,
 ##                    an extra topic option allows you to add a poll to it.

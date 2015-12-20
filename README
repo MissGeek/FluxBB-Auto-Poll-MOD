@@ -1,12 +1,15 @@
 FluxBB Auto Poll MOD
-Version: 1.2.1
-Last updated: 2013-02-03
+Version: 1.2.2rc1
+Last updated: 2015-12-20
 FluxBB version : 1.5.x (not compatible with 1.4.x anymore)
 Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
 GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
 License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 Changelog:
+
+2015/12/20 - v1.2.2
+- Placed back the revamped install_mod.php file that was gone thanks to my airhead... -_-
 
 2013/02/03 - v1.2.1
 - Fixed newline format for all files. Now all files use UNIX newline format (LF)
