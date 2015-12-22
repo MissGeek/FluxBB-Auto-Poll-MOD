@@ -3,13 +3,13 @@
 
 // Some info about your mod.
 $mod_title      = 'Auto Poll';
-$mod_version    = '1.2.0rc1';
-$release_date   = '2012-02-05';
+$mod_version    = '1.2.2';
+$release_date   = '2015-12-21';
 $author         = 'Ishimaru Chiaki, based on work by Koos and Mediator';
 $author_email   = 'ishimaru.chiaki@gmail.com';
 
 // Versions of FluxBB this mod was created for. A warning will be displayed, if versions do not match
-$fluxbb_versions= array('1.4.5','1.4.6','1.4.7','1.4.8');
+$fluxbb_versions= array('1.5.0','1.5.1','1.5.2','1.5.3','1.5.4','1.5.5','1.5.6','1.5.7','1.5.8','1.5.9');
 
 // Set this to false if you haven't implemented the restore function (see below)
 $mod_restore	= true;
@@ -25,7 +25,7 @@ function install()
 	{
 		$db->query('ALTER TABLE '.$db->prefix.'polls ENGINE = InnoDB') or error('Unable to alter table "polls"', __FILE__, __LINE__, $db->error());
 	}
-	$db->query('ALTER TABLE '.$db->prefix.'polls CHARACTER SET utf8') or error('Unable to change charset of table "polls"', __FILE__, __LINE__, db->error());
+	$db->query('ALTER TABLE '.$db->prefix.'polls CHARACTER SET utf8') or error('Unable to change charset of table "polls"', __FILE__, __LINE__, $db->error());
 
 	// Change LONGTEXT to TEXT (only for mysql and mysqli, innodb or not ; pgsql and sqlite were already using TEXT)
 	if($db_type == 'mysql' || $db_type == 'mysql_innodb' || $db_type == 'mysqli' || $db_type == 'mysqli_innodb')
@@ -33,6 +33,20 @@ function install()
 		$db->alter_field('polls','options','TEXT',false) or error('Unable to alter field "options" in table "polls"', __FILE__, __LINE__, $db->error());
 		$db->alter_field('polls','voters','TEXT',true) or error('Unable to alter field "voters" in table "polls"', __FILE__, __LINE__, $db->error());
 		$db->alter_field('polls','votes','TEXT',true) or error('Unable to alter field "votes" in table "polls"', __FILE__, __LINE__, $db->error());
+	}
+	
+	//Due to an error in install_mod.php in version < 1.2.2, the added field in the group table wasn't named properly and caused an error message in admin page. Let's fix it.
+	if($db->field_exists('groups','post_polls'))
+	{
+		$db->add_field('groups', 'g_post_polls', 'SMALLINT UNSIGNED', false, '1', $after_field) or error('Unable to add column "g_post_polls" to table "groups"', __FILE__, __LINE__, $db->error());
+		
+		$result = $db->query('SELECT g_id, post_polls FROM '.$db->prefix.'groups ORDER BY g_id') or error('Unable to get data from "post_polls" in table "groups"', __FILE__, __LINE__, $db->error());
+	
+		while($value = $db->fetch_assoc($result))
+			$db->query('UPDATE '.$db->prefix.'groups SET g_post_polls='.$value['post_polls'].' WHERE g_id='.$value['g_id']) or error('Unable to update column "g_post_polls" in table "groups"', __FILE__, __LINE__, $db->error());
+		
+		$db->drop_field('groups','post_polls')  or error('Unable to drop column "post_polls" to table "groups"', __FILE__, __LINE__, $db->error());
+	
 	}
 
 	// Delete all .php files in the cache (someone might have visited the forums while we were updating and thus, generated incorrect cache files)

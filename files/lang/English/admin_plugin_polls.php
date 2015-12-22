@@ -19,6 +19,6 @@ $lang_app = array(
 'Reset polls label'			=> 'Reset polls',
 'Reset polls explain'		=> 'Allow moderators to reset polls.',
 'Options updated'			=> 'Options updated. Redirecting …',
-'Post polls labol'			=> 'Post polls',
+'Post polls label'			=> 'Post polls',
 
 );

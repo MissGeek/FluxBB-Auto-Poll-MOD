@@ -19,6 +19,6 @@ $lang_app = array(
 'Reset polls label'			=> 'Réinitialiser des sondages',
 'Reset polls explain'		=> 'Autorise les modérateurs à réinitialiser des sondages.',
 'Options updated'			=> 'Options mises à jour. Redirection …',
-'Post polls labol'			=> 'Créer des sondages',
+'Post polls label'			=> 'Créer des sondages',
 
 );

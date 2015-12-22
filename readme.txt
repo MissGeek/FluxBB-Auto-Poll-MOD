@@ -1,10 +1,10 @@
 ##
 ##        Mod title:  Auto Poll
 ##
-##       Mod version:  1.2.2rc1
+##       Mod version:  1.2.2
 ##   Works on FluxBB:  1.5.*
 ##      Release date:  2009-09-07
-##       Review date:  2015-12-20
+##       Review date:  2015-12-22
 ##            Author:  Koos (pampoen10@yahoo.com)
 ##   Original Author:  Mediator (med_mediator@hotmail.com)
 ##      Contributors:  BN (http://la-bnbox.fr), Ishimaru Chiaki (http://ishimaru.pingveno.net)
@@ -92,12 +92,7 @@ moderate.php
 #
 #---------[ 5. FIND (line: 580) ]---------------------------------------------
 #
-
-		// Get last_post, last_post_id, and last_poster from the topic and update it	
-		// Get last_post, last_post_id, and last_poster from the topic and update it
-		$result = $db->query('SELECT id, poster, posted FROM '.$db->prefix.'posts WHERE topic_id='.$tid.' ORDER BY id DESC LIMIT 1') or error('Unable to fetch post info', __FILE__, __LINE__, $db->error());	202:             $result = $db->query('SELECT id, poster, posted FROM '.$db->prefix.'posts WHERE topic_id='.$tid.' ORDER BY id DESC LIMIT 1') or error('Unable to fetch post info', __FILE__, __LINE__, $db->error());
-		$last_post_data = $db->fetch_assoc($result);	203:             $last_post_data = $db->fetch_assoc($result);
-		// Merge the posts into the topic	578:         // Merge the posts into the topic
+		// Merge the posts into the topic
 		$db->query('UPDATE '.$db->prefix.'posts SET topic_id='.$merge_to_tid.' WHERE topic_id IN('.implode(',', $topics).')') or error('Unable to merge the posts into the topic', __FILE__, __LINE__, $db->error());
 
 #
@@ -109,20 +104,20 @@ moderate.php
 
 
 #
-#---------[ 7. FIND (line: 870) ]---------------------------------------------
+#---------[ 7. FIND (line: 897) ]---------------------------------------------
 #
-
+	// Select topics
 	$result = $db->query('SELECT id, poster, subject, posted, last_post, last_post_id, last_poster, num_views, num_replies, closed, sticky, moved_to FROM '.$db->prefix.'topics WHERE id IN('.implode(',', $topic_ids).') ORDER BY sticky DESC, '.$sort_by.', id DESC') or error('Unable to fetch topic list for forum', __FILE__, __LINE__, $db->error());
 
 
 #
 #---------[ 8. REPLACE WITH ]---------------------------------------------------
 #
-
+	// Select topics
 	$result = $db->query('SELECT id, poster, subject, posted, last_post, last_post_id, last_poster, num_views, num_replies, closed, sticky, moved_to, question FROM '.$db->prefix.'topics WHERE id IN('.implode(',', $topic_ids).') ORDER BY sticky DESC, '.$sort_by.', id DESC') or error('Unable to fetch topic list for forum', __FILE__, __LINE__, $db->error());
 
 #
-#---------[ 9. FIND (line: 898) ]---------------------------------------------
+#---------[ 9. FIND (line: 924) ]---------------------------------------------
 #
 
 		if ($cur_topic['sticky'] == '1')
@@ -150,7 +145,7 @@ post.php
 
 
 #
-#---------[ 12. FIND (line: 430) ]---------------------------------------------
+#---------[ 12. FIND (line: 449) ]---------------------------------------------
 #
 
 		redirect('viewtopic.php?pid='.$new_pid.'#p'.$new_pid, $lang_post['Post redirect']);
@@ -164,7 +159,7 @@ post.php
 
 
 #
-#---------[ 14. FIND (line: 649) ]---------------------------------------------
+#---------[ 14. FIND (line: 674) ]---------------------------------------------
 #
 
 if (!$pun_user['is_guest'])
@@ -186,7 +181,7 @@ if (!$pun_user['is_guest'])
 edit.php
 
 #
-#---------[ 12. FIND (line: 133) ]---------------------------------------------
+#---------[ 12. FIND (line: 139) ]---------------------------------------------
 #
 
 		redirect('viewtopic.php?pid='.$id.'#p'.$id, $lang_post['Edit redirect']);
@@ -200,7 +195,7 @@ edit.php
 
 
 #
-#---------[ 14. FIND (line: 248) ]---------------------------------------------
+#---------[ 14. FIND (line: 254) ]---------------------------------------------
 #
 
 		$checkboxes[] = '<label><input type="checkbox" name="hide_smilies" value="1" tabindex="'.($cur_index++).'" />'.$lang_post['Hide smilies'].'<br /></label>';
@@ -239,7 +234,7 @@ else
 
 
 #
-#---------[ 19. FIND (line: 496) ]---------------------------------------------
+#---------[ 19. FIND (line: 498) ]---------------------------------------------
 #
 
 		if ($show_as == 'posts')
@@ -275,7 +270,7 @@ else
 
 
 #
-#---------[ 23. FIND (line: 717) ]---------------------------------------------
+#---------[ 23. FIND (line: 721) ]---------------------------------------------
 #
 
 					$subject_new_posts = null;
@@ -298,7 +293,7 @@ viewforum.php
 
 
 #
-#---------[ 26. FIND (line: 162) ]---------------------------------------------
+#---------[ 26. FIND (line: 173) ]---------------------------------------------
 #
 
 	$result = $db->query($sql) or error('Unable to fetch topic list', __FILE__, __LINE__, $db->error());
@@ -312,7 +307,7 @@ viewforum.php
 
 
 #
-#---------[ 28. FIND (line: 212) ]---------------------------------------------
+#---------[ 28. FIND (line: 224) ]---------------------------------------------
 #
 
 		// Insert the status text before the subject
@@ -333,7 +328,7 @@ viewtopic.php
 
 
 #
-#---------[ 31. FIND (line: 212) ]---------------------------------------------
+#---------[ 31. FIND (line: 227) ]---------------------------------------------
 #
 
 // Retrieve the posts (and their respective poster/online status)
@@ -354,7 +349,7 @@ include/functions.php
 
 
 #
-#---------[ 34. FIND (line: 693) ]---------------------------------------------
+#---------[ 34. FIND (line: 741) ]---------------------------------------------
 #
 
 	// Create a list of the post IDs in this topic

@@ -331,7 +331,7 @@ else if (isset($_GET['edit_forum']))
 									<th><?php echo $lang_admin_forums['Read forum label']; ?></th>
 									<th><?php echo $lang_admin_forums['Post replies label']; ?></th>
 									<th><?php echo $lang_admin_forums['Post topics label']; ?></th>
-									<th><?php echo $lang_app['Post polls labol']; ?></th>
+									<th><?php echo $lang_app['Post polls label']; ?></th>
 								</tr>
 							</thead>
 							<tbody>

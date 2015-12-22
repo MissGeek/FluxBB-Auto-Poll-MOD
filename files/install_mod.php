@@ -3,8 +3,8 @@
 
 // Some info about your mod.
 $mod_title      = 'Auto Poll';
-$mod_version    = '1.2.2rc1';
-$release_date   = '2015-12-20';
+$mod_version    = '1.2.2';
+$release_date   = '2015-12-22';
 $author         = 'Ishimaru Chiaki, based on work by Koos and Mediator';
 $author_email   = 'ishimaru.chiaki@gmail.com';
 
@@ -68,10 +68,10 @@ function install()
 			)
 	);
 
-	$db->create_table('polls', $schema) or error('Unable to create table "new_table_name"', __FILE__, __LINE__, $db->error());
-	$db->add_field('topics', 'question', 'VARCHAR(255)', false, '', $after_field) or error('Unable to add column "some_column" to table "some_table"', __FILE__, __LINE__, $db->error());
-	$db->add_field('forum_perms', 'post_polls', 'TINYINT(1) UNSIGNED', false, '1', $after_field) or error('Unable to add column "some_column" to table "some_table"', __FILE__, __LINE__, $db->error());
-	$db->add_field('groups', 'post_polls', 'SMALLINT UNSIGNED', false, '1', $after_field) or error('Unable to add column "some_column" to table "some_table"', __FILE__, __LINE__, $db->error());
+	$db->create_table('polls', $schema) or error('Unable to create table "polls"', __FILE__, __LINE__, $db->error());
+	$db->add_field('topics', 'question', 'VARCHAR(255)', false, '', $after_field) or error('Unable to add column "question" to table "topics"', __FILE__, __LINE__, $db->error());
+	$db->add_field('forum_perms', 'post_polls', 'TINYINT(1) UNSIGNED', false, '1', $after_field) or error('Unable to add column "post_polls" to table "forum_perms"', __FILE__, __LINE__, $db->error());
+	$db->add_field('groups', 'g_post_polls', 'SMALLINT UNSIGNED', false, '1', $after_field) or error('Unable to add column "g_post_polls" to table "groups"', __FILE__, __LINE__, $db->error());
 
 	$config = array(
 		'o_poll_enabled'			=> '1',
@@ -98,9 +98,9 @@ function restore()
 	global $db, $db_type, $pun_config;
 
 	$db->drop_table('polls') or error('Unable to drop table "new_table_name"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('topics', 'question') or error('Unable to drop column "some_column" from table "some_table"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('forum_perms', 'post_polls') or error('Unable to drop column "some_column" from table "some_table"', __FILE__, __LINE__, $db->error());
-	$db->drop_field('groups', 'post_polls') or error('Unable to drop column "some_column" from table "some_table"', __FILE__, __LINE__, $db->error());
+	$db->drop_field('topics', 'question') or error('Unable to drop column "question" from table "topics"', __FILE__, __LINE__, $db->error());
+	$db->drop_field('forum_perms', 'post_polls') or error('Unable to drop column "post_polls" from table "forum_perms"', __FILE__, __LINE__, $db->error());
+	$db->drop_field('groups', 'g_post_polls') or error('Unable to drop column "g_post_polls" from table "groups"', __FILE__, __LINE__, $db->error());
 	$db->query('DELETE FROM '.$db->prefix.'config WHERE conf_name LIKE "o_polls_%"') or error('Unable to remove config entries', __FILE__, __LINE__, $db->error());;
 
 	forum_clear_cache();

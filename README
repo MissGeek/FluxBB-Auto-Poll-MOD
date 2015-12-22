@@ -1,6 +1,6 @@
 FluxBB Auto Poll MOD
-Version: 1.2.2rc1
-Last updated: 2015-12-20
+Version: 1.2.2
+Last updated: 2015-12-22
 FluxBB version : 1.5.x (not compatible with 1.4.x anymore)
 Author: Ishimaru Chiaki (ishimaru.chiaki@gmail.com), based on work by Koos and Mediator
 GitHub repository: https://github.com/MissGeek/FluxBB-Auto-Poll-MOD
@@ -8,8 +8,12 @@ License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
 
 Changelog:
 
-2015/12/20 - v1.2.2
+2015/12/22 - v1.2.2
 - Placed back the revamped install_mod.php file that was gone thanks to my airhead... -_-
+- Fixed a bad copy/paste in one of the code block to find and updated the line numbers to fit with FluxBB 1.5.9.
+- Fixed a misspelled language key in both admin language files and the page that uses this key (labol -> label)
+- Fixed a bad naming of one added field in the group table : it was created as "post_polls" instead of "g_post_polls" and this caused an error message while attempting to reach the plugin admin page.
+IMPORTANT : If you already installed this MOD before downloading this version, you must use the "update_from_1.1.php" file on your forum root in order to fix everything that was added by the install_mod.php file in prior versions.
 
 2013/02/03 - v1.2.1
 - Fixed newline format for all files. Now all files use UNIX newline format (LF)
@@ -41,6 +45,10 @@ Changelog:
 If you were using this MOD on FluxBB 1.4, the MOD versions prior to 1.2 had a wrong character set (latin1 instead of utf8) in the polls table.  Please use the update_from_1.1.php file to fix it.  For safety reasons, I recommend you to test it on a copy of your database before using it on your live board.  If there's any issue, please leave a report wether on Github, FluxBB.org or FluxBB.fr, and detail your issue as much as possible (server info, browser/OS info, etc.) !
 
 I can give support in English and French.
+
+#--- COMPATIBILITY WITH INSTALLERS ---
+
+This Mod was not tested with any one-click mod installer.
 
 #--- LOCALIZATION ---
 
